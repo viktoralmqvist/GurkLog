@@ -2,6 +2,12 @@
 frame:RegisterEvent("RAID_INSTANCE_WELCOME");
 frame:RegisterEvent("ADDON_LOADED");
 
+local green = "|cff00ff00";
+local red = "|cffff0000";
+local nocolor = "|r";
+local on = green .. "ON" .. nocolor;
+local off = red .. "OFF" .. nocolor;
+
 function frame:OnEvent(event, arg1, ...)
   debugLog(event);
 
@@ -58,26 +64,26 @@ end
 
 function GurkCheckLogging()
   if LoggingCombat() then
-   print("Combat logging is enabled");
+   print("Combat logging is " .. on);
   else
-   print("Combat logging is disabled");
+   print("Combat logging is " .. off);
   end
 end
 
 function GurkStartLogging()
   if LoggingCombat() then
-    print("Combat logging is already enabled");
+    print("Combat logging is already " .. on);
   else
     LoggingCombat(true);
-    print("Combat logging enabled");
+    print("Combat logging turned " .. on);
   end
 end
 
 function GurkStopLogging()
   if LoggingCombat() then
     LoggingCombat(false);
-    print("Combat logging disabled");
+    print("Combat logging turned " .. off);
   else
-    print("Combat logging is already disabled");
+    print("Combat logging is already " .. off);
   end
 end
