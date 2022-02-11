@@ -12,12 +12,18 @@ local on = green .. "ON" .. nocolor;
 local off = red .. "OFF" .. nocolor;
 
 local playerName = UnitName("player");
+local loggingRequest = "GurkLogRequest";
+
+-- TODO
+-- Message when joining raid asking if anyone is logging
+-- Only send messages when in raid
+-- Add reminder to stop logging
 
 function frame:OnEvent(event, arg1, arg2, ...)
    debugLog(event);
 
    if event == "RAID_INSTANCE_WELCOME" then
-      if isRaidInstance() then
+      if IsRaidInstance() then
 	 GurkStartLogging();
       end
       
@@ -25,7 +31,7 @@ function frame:OnEvent(event, arg1, arg2, ...)
       init();
 
    elseif event == "CHAT_MSG_ADDON" and arg1 == prefix then
-      print(arg2);
+      HandleAddonMsg(arg2);
 
    end
 end
@@ -39,6 +45,9 @@ function SlashCmdList.HAVEWEMET(msg)
 
    elseif msg == "stop" then
       GurkStopLogging();
+
+   elseif msg == "ask" then
+      GurkSendLoggingRequest();
 
    elseif msg == "debug" then
       GurkDebug = not GurkDebug;
@@ -56,12 +65,12 @@ function init()
       GurkDebug = false;
    end
 
-   if isRaidInstance() then
+   if IsRaidInstance() then
       GurkStartLogging();
    end
 end
 
-function isRaidInstance()
+function IsRaidInstance()
    local _, zoneType = GetInstanceInfo();
    return zoneType == "raid";
 end
@@ -97,4 +106,34 @@ function GurkStopLogging()
    else
       print("Combat logging is already " .. off);
    end
+end
+
+function GurkAnswerLoggingRequest(requester)
+   if LoggingCombat() then
+      C_ChatInfo.SendAddonMessage(prefix, playerName .. " is combat logging", "WHISPER", requester);
+   end
+end
+
+function GurkSendLoggingRequest()
+   C_ChatInfo.SendAddonMessage(prefix, loggingRequest .. ":" .. playerName, "RAID");
+end
+
+function HandleAddonMsg(msg)
+   splitMessage = Split(msg);
+   if splitMessage[1] == loggingRequest then
+      GurkAnswerLoggingRequest(splitMessage[2]);
+   else
+      print(msg);
+   end
+end
+
+function Split(s, delimiter)
+   if delimiter == nil then
+      delimiter = ":"
+   end
+    result = {};
+    for match in (s..delimiter):gmatch("(.-)"..delimiter) do
+        table.insert(result, match);
+    end
+    return result;
 end
