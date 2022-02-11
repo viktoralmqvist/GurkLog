@@ -6,8 +6,7 @@ function frame:OnEvent(event, arg1, ...)
   debugLog(event);
 
   if event == "RAID_INSTANCE_WELCOME" then
-    local _, zoneType = GetInstanceInfo();
-    if zoneType == "raid" then
+    if isRaidInstance() then
       GurkStartLogging();
     end
 
@@ -40,6 +39,15 @@ function init()
   if GurkDebug == nil then
     GurkDebug = false;
   end
+
+  if isRaidInstance() then
+    GurkStartLogging();
+  end
+end
+
+function isRaidInstance()
+  local _, zoneType = GetInstanceInfo();
+  return zoneType == "raid";
 end
 
 function debugLog(msg)
