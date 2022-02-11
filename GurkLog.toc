@@ -2,5 +2,6 @@
 ## Title: Gurk Log
 ## Version: 1.0
 ## Notes: Gurk Log helps you manage combat loggin.
+## SavedVariables: GurkDebug
 
 GurkLog.lua

@@ -1,17 +1,23 @@
 ﻿local frame = CreateFrame("FRAME");
 frame:RegisterEvent("RAID_INSTANCE_WELCOME");
+frame:RegisterEvent("ADDON_LOADED");
 
 function frame:OnEvent(event, arg1, ...)
+  debugLog(event);
+
   if event == "RAID_INSTANCE_WELCOME" then
     local _, zoneType = GetInstanceInfo();
     if zoneType == "raid" then
       GurkStartLogging();
     end
+
+  elseif event == "ADDON_LOADED" and arg1 == "GurkLog" then
+    init();
+
   end
 end
 
 frame:SetScript("OnEvent", frame.OnEvent);
-
 
 SLASH_HAVEWEMET1 = "/gurk";
 function SlashCmdList.HAVEWEMET(msg)
@@ -21,10 +27,25 @@ function SlashCmdList.HAVEWEMET(msg)
  elseif msg == "stop" then
    GurkStopLogging();
 
+ elseif msg == "debug" then
+   GurkDebug = not GurkDebug;
+
  else
    GurkCheckLogging();
 
  end
+end
+
+function init()
+  if GurkDebug == nil then
+    GurkDebug = false;
+  end
+end
+
+function debugLog(msg)
+  if GurkDebug then
+    print("Gurk debug: " .. msg);
+  end
 end
 
 function GurkCheckLogging()
