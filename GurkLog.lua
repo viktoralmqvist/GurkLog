@@ -40,10 +40,10 @@ frame:SetScript("OnEvent", frame.OnEvent);
 
 SLASH_HAVEWEMET1 = "/gurk";
 function SlashCmdList.HAVEWEMET(msg)
-   if msg == "start" then
+   if msg == "on" then
       GurkStartLogging();
 
-   elseif msg == "stop" then
+   elseif msg == "off" then
       GurkStopLogging();
 
    elseif msg == "ask" then
