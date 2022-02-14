@@ -2,6 +2,7 @@
 frame:RegisterEvent("RAID_INSTANCE_WELCOME");
 frame:RegisterEvent("ADDON_LOADED");
 frame:RegisterEvent("CHAT_MSG_ADDON");
+frame:RegisterEvent("ZONE_CHANGED_NEW_AREA");
 
 local prefix = "gurklogprefix";
 
@@ -17,10 +18,9 @@ local loggingRequest = "GurkLogRequest";
 -- TODO
 -- Message when joining raid asking if anyone is logging
 -- Only send messages when in raid
--- Add reminder to stop logging
 
 function frame:OnEvent(event, arg1, arg2, ...)
-   debugLog(event);
+   debugLog(event, arg1, arg2, ...);
 
    if event == "RAID_INSTANCE_WELCOME" then
       if IsRaidInstance() then
@@ -32,6 +32,9 @@ function frame:OnEvent(event, arg1, arg2, ...)
 
    elseif event == "CHAT_MSG_ADDON" and arg1 == prefix then
       HandleAddonMsg(arg2);
+
+   elseif event == "ZONE_CHANGED_NEW_AREA" then
+      HandleZoneChange();
 
    end
 end
@@ -75,9 +78,9 @@ function IsRaidInstance()
    return zoneType == "raid";
 end
 
-function debugLog(msg)
+function debugLog(msg, ...)
    if GurkDebug then
-      print("Gurk debug: " .. msg);
+      print("Gurk debug: " .. msg, ...);
    end
 end
 
@@ -136,4 +139,23 @@ function Split(s, delimiter)
         table.insert(result, match);
     end
     return result;
+end
+
+StaticPopupDialogs["GURK_STOP_LOG"] = {
+   text = "Do you want to turn off combat logging?",
+   button1 = "Yes",
+   button2 = "No",
+   OnAccept = function()
+      GurkStopLogging()
+   end,
+   timeout = 0,
+   whileDead = true,
+   hideOnEscape = true,
+   preferredIndex = 3,
+}
+
+function HandleZoneChange()
+   if LoggingCombat() and GetRealZoneText() == "Shattrath City" then
+      StaticPopup_Show("GURK_STOP_LOG")
+   end
 end
