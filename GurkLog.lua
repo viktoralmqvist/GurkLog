@@ -96,8 +96,8 @@ function GurkStartLogging()
    if LoggingCombat() then
       print("Combat logging is already " .. on);
    else
-      LoggingCombat(true);
       C_ChatInfo.SendAddonMessage(prefix, playerName .. " started combat logging", "RAID");
+      LoggingCombat(true);
       print("Combat logging turned " .. on);
    end
 end
