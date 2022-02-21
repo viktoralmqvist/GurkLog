@@ -17,14 +17,14 @@ local loggingRequest = "GurkLogRequest";
 
 -- TODO
 -- Message when joining raid asking if anyone is logging
--- Only send messages when in raid
+-- Send messages to raid or party or whisper self
 
 function frame:OnEvent(event, arg1, arg2, ...)
    debugLog(event, arg1, arg2, ...);
 
    if event == "RAID_INSTANCE_WELCOME" then
       if IsRaidInstance() then
-	 GurkStartLogging();
+	 StartLogging();
       end
       
    elseif event == "ADDON_LOADED" and arg1 == "GurkLog" then
@@ -44,19 +44,19 @@ frame:SetScript("OnEvent", frame.OnEvent);
 SLASH_HAVEWEMET1 = "/gurk";
 function SlashCmdList.HAVEWEMET(msg)
    if msg == "on" then
-      GurkStartLogging();
+      StartLogging();
 
    elseif msg == "off" then
-      GurkStopLogging();
+      StopLogging();
 
    elseif msg == "ask" then
-      GurkSendLoggingRequest();
+      SendLoggingRequest();
 
    elseif msg == "debug" then
       GurkDebug = not GurkDebug;
 
    else
-      GurkCheckLogging();
+      CheckLogging();
 
    end
 end
@@ -70,7 +70,7 @@ function init()
    end
 
    if IsRaidInstance() then
-      GurkStartLogging();
+      StartLogging();
    end
 end
 
@@ -93,7 +93,11 @@ function debugLog(msg, ...)
    end
 end
 
-function GurkCheckLogging()
+----------------------------------------
+-- Manage logging
+----------------------------------------
+
+function CheckLogging()
    if LoggingCombat() then
       print("Combat logging is " .. on);
    else
@@ -101,7 +105,7 @@ function GurkCheckLogging()
    end
 end
 
-function GurkStartLogging()
+function StartLogging()
    if LoggingCombat() then
       print("Combat logging is already " .. on);
    else
@@ -111,7 +115,7 @@ function GurkStartLogging()
    end
 end
 
-function GurkStopLogging()
+function StopLogging()
    if LoggingCombat() then
       LoggingCombat(false);
       print("Combat logging turned " .. off);
@@ -120,20 +124,43 @@ function GurkStopLogging()
    end
 end
 
-function GurkAnswerLoggingRequest(requester)
+StaticPopupDialogs["GURK_STOP_LOG"] = {
+   text = "Do you want to turn off combat logging?",
+   button1 = "Yes",
+   button2 = "No",
+   OnAccept = function()
+      StopLogging()
+   end,
+   timeout = 0,
+   whileDead = true,
+   hideOnEscape = true,
+   preferredIndex = 3,
+}
+
+function HandleZoneChange()
+   if LoggingCombat() and GetRealZoneText() == "Shattrath City" then
+      StaticPopup_Show("GURK_STOP_LOG")
+   end
+end
+
+----------------------------------------
+-- Message handeling
+----------------------------------------
+
+function AnswerLoggingRequest(requester)
    if LoggingCombat() then
       C_ChatInfo.SendAddonMessage(prefix, playerName .. " is combat logging", "WHISPER", requester);
    end
 end
 
-function GurkSendLoggingRequest()
+function SendLoggingRequest()
    C_ChatInfo.SendAddonMessage(prefix, loggingRequest .. ":" .. playerName, "RAID");
 end
 
 function HandleAddonMsg(msg)
    splitMessage = Split(msg);
    if splitMessage[1] == loggingRequest then
-      GurkAnswerLoggingRequest(splitMessage[2]);
+      AnswerLoggingRequest(splitMessage[2]);
    else
       print(msg);
    end
@@ -148,23 +175,4 @@ function Split(s, delimiter)
         table.insert(result, match);
     end
     return result;
-end
-
-StaticPopupDialogs["GURK_STOP_LOG"] = {
-   text = "Do you want to turn off combat logging?",
-   button1 = "Yes",
-   button2 = "No",
-   OnAccept = function()
-      GurkStopLogging()
-   end,
-   timeout = 0,
-   whileDead = true,
-   hideOnEscape = true,
-   preferredIndex = 3,
-}
-
-function HandleZoneChange()
-   if LoggingCombat() and GetRealZoneText() == "Shattrath City" then
-      StaticPopup_Show("GURK_STOP_LOG")
-   end
 end
