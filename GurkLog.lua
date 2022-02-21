@@ -18,6 +18,7 @@ local loggingRequest = "GurkLogRequest";
 -- TODO
 -- Message when joining raid asking if anyone is logging
 -- Send messages to raid or party or whisper self
+-- Use don't send player name in ask loggingRequest. Use the default arguments.
 
 function frame:OnEvent(event, arg1, arg2, ...)
    debugLog(event, arg1, arg2, ...);
@@ -70,7 +71,7 @@ function init()
    end
 
    if IsRaidInstance() then
-      C_Timer.After(1, function() StartLogging() end);
+      C_Timer.After(3, function() StartLogging() end);
    end
 end
 
