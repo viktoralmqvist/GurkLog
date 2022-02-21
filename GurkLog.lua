@@ -82,17 +82,6 @@ function SetAdvancedCombatLogging()
    end
 end   
 
-function IsRaidInstance()
-   local _, zoneType = GetInstanceInfo();
-   return zoneType == "raid";
-end
-
-function debugLog(msg, ...)
-   if GurkDebug then
-      print("Gurk debug: " .. msg, ...);
-   end
-end
-
 ----------------------------------------
 -- Manage logging
 ----------------------------------------
@@ -176,3 +165,19 @@ function Split(s, delimiter)
     end
     return result;
 end
+
+----------------------------------------
+-- Utilities
+----------------------------------------
+
+function IsRaidInstance()
+   local _, zoneType = GetInstanceInfo();
+   return zoneType == "raid";
+end
+
+function debugLog(msg, ...)
+   if GurkDebug then
+      print("Gurk debug: " .. msg, ...);
+   end
+end
+
