@@ -63,6 +63,7 @@ end
 
 function init()
    C_ChatInfo.RegisterAddonMessagePrefix(prefix);
+   SetAdvancedCombatLogging();
 
    if GurkDebug == nil then
       GurkDebug = false;
@@ -72,6 +73,14 @@ function init()
       GurkStartLogging();
    end
 end
+
+function SetAdvancedCombatLogging()
+   result = GetCVar("advancedCombatLogging");
+   if result == "0" then
+      SetCVar("advancedCombatLogging", 1);
+      print("Enabled Advanced Combat Logging");
+   end
+end   
 
 function IsRaidInstance()
    local _, zoneType = GetInstanceInfo();
