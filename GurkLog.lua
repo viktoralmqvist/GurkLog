@@ -20,8 +20,8 @@ local loggingRequest = "GurkLogRequest";
 -- Send messages to raid or party or whisper self
 -- Use don't send player name in ask loggingRequest. Use the default arguments.
 
-function frame:OnEvent(event, arg1, arg2, ...)
-   debugLog(event, arg1, arg2, ...);
+function frame:OnEvent(event, arg1, arg2, arg3, arg4, ...)
+   debugLog(event, arg1, arg2, arg3, arg4, ...);
 
    if event == "RAID_INSTANCE_WELCOME" then
       if IsRaidInstance() then
@@ -32,7 +32,7 @@ function frame:OnEvent(event, arg1, arg2, ...)
       init();
 
    elseif event == "CHAT_MSG_ADDON" and arg1 == prefix then
-      HandleAddonMsg(arg2);
+      HandleAddonMsg(arg2, arg4);
 
    elseif event == "ZONE_CHANGED_NEW_AREA" then
       HandleZoneChange();
@@ -137,9 +137,9 @@ end
 -- Message handeling
 ----------------------------------------
 
-function AnswerLoggingRequest(requester)
+function AnswerLoggingRequest(sender)
    if LoggingCombat() then
-      C_ChatInfo.SendAddonMessage(prefix, playerName .. " is combat logging", "WHISPER", requester);
+      C_ChatInfo.SendAddonMessage(prefix, playerName .. " is combat logging", "WHISPER", sender);
    end
 end
 
@@ -147,10 +147,10 @@ function SendLoggingRequest()
    C_ChatInfo.SendAddonMessage(prefix, loggingRequest .. ":" .. playerName, "RAID");
 end
 
-function HandleAddonMsg(msg)
+function HandleAddonMsg(msg, sender)
    splitMessage = Split(msg);
    if splitMessage[1] == loggingRequest then
-      AnswerLoggingRequest(splitMessage[2]);
+      AnswerLoggingRequest(sender);
    else
       print(msg);
    end
