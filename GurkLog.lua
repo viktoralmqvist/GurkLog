@@ -25,7 +25,7 @@ function frame:OnEvent(event, arg1, arg2, ...)
 
    if event == "RAID_INSTANCE_WELCOME" then
       if IsRaidInstance() then
-	 C_Timer.After(1, function() StartLogging() end);
+	 C_Timer.After(3, function() StartLogging() end);
       end
       
    elseif event == "ADDON_LOADED" and arg1 == "GurkLog" then
