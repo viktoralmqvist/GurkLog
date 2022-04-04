@@ -18,7 +18,7 @@ local loggingRequest = "GurkLogRequest";
 -- TODO
 -- Message when joining raid asking if anyone is logging
 -- Send messages to raid or party or whisper self
--- Use don't send player name in ask loggingRequest. Use the default arguments.
+-- Remove sending playername when aswering logging requests (and remove split)
 
 function frame:OnEvent(event, arg1, arg2, arg3, arg4, ...)
    debugLog(event, arg1, arg2, arg3, arg4, ...);
