@@ -24,7 +24,9 @@ function frame:OnEvent(event, arg1, arg2, arg3, arg4, ...)
    debugLog(event, arg1, arg2, arg3, arg4, ...);
 
    if event == "RAID_INSTANCE_WELCOME" then
-      if IsRaidInstance() then
+      debugLog("IsLoggingInstance() = ", IsLoggingInstance())
+      if IsLoggingInstance() then
+         isInLoggingInstance = true
 	 C_Timer.After(3, function() StartLogging() end);
       end
       
@@ -70,7 +72,12 @@ function init()
       GurkDebug = false;
    end
 
-   if IsRaidInstance() then
+   if isInLoggingInstance == nil then
+      isInLoggingInstance = false;
+   end
+
+   if IsLoggingInstance() then
+      isInLoggingInstance = true
       C_Timer.After(3, function() StartLogging() end);
    end
 end
@@ -128,9 +135,12 @@ StaticPopupDialogs["GURK_STOP_LOG"] = {
 }
 
 function HandleZoneChange()
-   if LoggingCombat() and GetRealZoneText() == "Shattrath City" then
+   newIsInLogginInstance = IsLoggingInstance()
+   if isInLoggingInstance and not newIsInLogginInstance and LoggingCombat() then
       StaticPopup_Show("GURK_STOP_LOG")
    end
+
+   isInLoggingInstance = newIsInLoggingInstance
 end
 
 ----------------------------------------
@@ -171,9 +181,9 @@ end
 -- Utilities
 ----------------------------------------
 
-function IsRaidInstance()
-   local _, zoneType = GetInstanceInfo();
-   return zoneType == "raid";
+function IsLoggingInstance()
+  inInstance, instanceType = IsInInstance()
+  return isInstance and (instanceType == "party" or instanceType == "raid") and IsInRaid()
 end
 
 function debugLog(msg, ...)
