@@ -183,7 +183,7 @@ end
 
 function IsLoggingInstance()
   inInstance, instanceType = IsInInstance()
-  return isInstance and (instanceType == "party" or instanceType == "raid") and IsInRaid()
+  return inInstance and (instanceType == "party" or instanceType == "raid") and IsInRaid()
 end
 
 function debugLog(msg, ...)
