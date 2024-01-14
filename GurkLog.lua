@@ -136,7 +136,7 @@ StaticPopupDialogs["GURK_STOP_LOG"] = {
 
 function HandleZoneChange()
    newIsInLoggingInstance = IsLoggingInstance()
-   if isInLoggingInstance and not newIsInLoggingInstance and LoggingCombat() then
+   if isInLoggingInstance and not newIsInLoggingInstance and LoggingCombat() and not UnitIsDeadOrGhost("player") then
       StaticPopup_Show("GURK_STOP_LOG")
    end
 
